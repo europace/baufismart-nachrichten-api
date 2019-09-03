@@ -1,0 +1,94 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: Nachrichten API
+  description: work in progress - Api zum Abrufen und erstellen von Nachrichten. Hiermit können Vertrieb und Kreditentscheider zu einem Antrag miteinander kommunizieren.
+paths:
+  /nachrichten:
+    get:
+      summary: Nachrichten des Antrags
+      operationId: getAntragsNachrichten
+      parameters:
+        - name: antragsNummer
+          in: query
+          example: AB1234/1/1
+          required: true
+        - name: after_id
+          in: query
+          description: um nur Nachrichten zu erhalten, die nach einer bestimmten Nachricht erstellt wurden.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Nachricht'
+      security:
+        - oauth2:
+            - API
+    post:
+      summary: Nachricht zu einem Antrag erstellen
+      operationId: createAntragsNachricht
+      parameters:
+        - name: antragsNummer
+          in: query
+          example: AB1234/1/1
+          required: true
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/NeueNachricht'
+      responses:
+        201:
+          description: CREATED
+
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        password:
+          tokenUrl: https://api.europace.de/login
+          scopes:
+            API: Authorisation Scope für die gesamte API.
+  schemas:
+    Nachricht:
+      type: object
+      properties:
+        id:
+          description: 'eindeutige ID dieser Nachricht'
+          type: string
+        text:
+          type: string
+        ersteller:
+          $ref: '#/components/schemas/Partner'
+        zeitpunkt:
+          type: string
+          format: 'date-time'
+          description: Zeitpunkt der Nachricht
+      title: Nachricht
+      required:
+        - id
+    Partner:
+      type: object
+      properties:
+        partnerId:
+          type: string
+        anrede:
+          type: string
+          enum:
+            - FRAU
+            - HERR
+        nachname:
+          type: string
+        vorname:
+          type: string
+    NeueNachricht:
+      type: object
+      properties:
+        text:
+          type: string
+          description: der Nachrichtentext
