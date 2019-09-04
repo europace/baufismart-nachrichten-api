@@ -13,8 +13,13 @@ paths:
           in: query
           example: AB1234/1/1
           required: true
+          schema:
+            type: string
         - name: after_id
           in: query
+          schema:
+            type: string
+
           description: um nur Nachrichten zu erhalten, die nach einer bestimmten Nachricht erstellt wurden.
       responses:
         200:
@@ -36,6 +41,9 @@ paths:
           in: query
           example: AB1234/1/1
           required: true
+          schema:
+            type: string
+
       requestBody:
         content:
           application/json;charset=UTF-8:
@@ -44,6 +52,10 @@ paths:
       responses:
         201:
           description: CREATED
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Nachricht'
 
 components:
   securitySchemes:
